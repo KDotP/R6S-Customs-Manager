@@ -1,19 +1,22 @@
+# Github: KDotP
+# R6S Customs Manager
+
 import random as rand
 from tkinter import *
 import tkinter
 
 # Lists of potential bans, tactics, maps, etc
-atk_operators = ["Sledge", "Thatcher", "Ash", "Thermite", "Twitch", "Montagne", "Glaz", "Fuze", "Blitz", "IQ", "Buck", "Blackbeard", "Capitao", "Hibana", "Jackel", "Zofia", "Dokkaebi", "Lion", "Finka", "Maverick", "Nomad", "Gridlock", "Nokk", "Amaru", "Kali", "Iana", "Ace", "Zero", "Flores", "Osa", "Sens", "Grim"]
-def_operators = ["Smoke", "Mute", "Castle", "Pulse", "Doc", "Rook", "Kapkan", "Tachanka", "Jager", "Bandit", "Frost", "Valkyrie", "Caveira", "Echo", "Mira", "Lesion", "Ela", "Vigil", "Maestro", "Alibi", "Clash", "Kaid", "Mozzie", "Warden", "Goyo", "Wamai", "Oryx", "Meslusi", "Aruni", "Thunderbird", "Thorn", "Azami", "Solis"]
-maps = ["Nighthaven Labs", "Stadium", "Emerald Plains", "Bank", "Border", "Chalet", "Clubhouse", "Coastline", "Consulate", "Favela", "Fortress", "Hereford Base", "House", "Kafe Dostoyevsky", "Kanal", "Oregon", "Outback", "Presidential Plain", "Skyscraper", "Theme Park", "Tower", "Villa", "Yacht"]
-atk_strats = []
-def_strats = []
-rules = []
+atk_operators = ['Sledge', 'Thatcher', 'Ash', 'Thermite', 'Twitch', 'Montagne', 'Glaz', 'Fuze', 'Blitz', 'IQ', 'Buck', 'Blackbeard', 'Capitao', 'Hibana', 'Jackel', 'Zofia', 'Dokkaebi', 'Lion', 'Finka', 'Maverick', 'Nomad', 'Gridlock', 'Nokk', 'Amaru', 'Kali', 'Iana', 'Ace', 'Zero', 'Flores', 'Osa', 'Sens', 'Grim']
+def_operators = ['Smoke', 'Mute', 'Castle', 'Pulse', 'Doc', 'Rook', 'Kapkan', 'Tachanka', 'Jager', 'Bandit', 'Frost', 'Valkyrie', 'Caveira', 'Echo', 'Mira', 'Lesion', 'Ela', 'Vigil', 'Maestro', 'Alibi', 'Clash', 'Kaid', 'Mozzie', 'Warden', 'Goyo', 'Wamai', 'Oryx', 'Meslusi', 'Aruni', 'Thunderbird', 'Thorn', 'Azami', 'Solis']
+maps = ['Nighthaven Labs', 'Stadium', 'Emerald Plains', 'Bank', 'Border', 'Chalet', 'Clubhouse', 'Coastline', 'Consulate', 'Favela', 'Fortress', 'Hereford Base', 'House', 'Kafe Dostoyevsky', 'Kanal', 'Oregon', 'Outback', 'Presidential Plain', 'Skyscraper', 'Theme Park', 'Tower', 'Villa', 'Yacht']
+# Strats are WIP
+atk_strats = ['No Drones']
+def_strats = ['No Reinforing', 'Must Spawnpeek Every Round']
+uni_strats = ['Only 1x or Iron Sights', 'Crouching or Sprinting ONLY']
 
-# Number of bans and playable maps
-#atk_bans = 4
-#def_bans = 4
-#max_playable_maps = 5
+# Uni strats apply to both teams, so merge them
+atk_strats.append(uni_strats)
+def_strats.append(uni_strats)
 
 # Maximum number of symetric operator bans
 max_op_bans = 0
@@ -26,6 +29,7 @@ else:
     else:
         max_op_bans = len(def_operators) - 1
 
+# Store max map count to ensure at least one map is always playable
 max_maps = len(maps) - 1
 
 # Generate the list of bans
@@ -44,7 +48,7 @@ def RunIt():
     
     # Convert function to variables
     banned_attackers, banned_defenders, available_maps = Generate(atk_bans, def_bans, max_playable_maps)
-    print("Banned Attackers: " +  ', '.join(banned_attackers) + "\nBanned Defenders: " + ', '.join(banned_defenders) + "\nAvailable Maps: " + ', '.join(available_maps))
+    print('Banned Attackers: ' +  ', '.join(banned_attackers) + '\nBanned Defenders: ' + ', '.join(banned_defenders) + '\nAvailable Maps: ' + ', '.join(available_maps))
 
 
 # Get data from user input fields
@@ -81,17 +85,18 @@ def ResultPopup():
 
         # Create new result window and define size
         newWindow = Toplevel(top)
-        newWindow.title("Results")
-        newWindow.geometry("750x120")
+        newWindow.title('Results')
+        newWindow.geometry('750x120')
+        # New window is not centered - felt more comfortable to user to have different window placement
 
         # Display for Attacker Bans
-        Label(newWindow, text="Banned Attackers:\n" + ', '.join(atk_bans)).pack()
+        Label(newWindow, text='Banned Attackers:\n' + ', '.join(atk_bans)).pack()
 
         # Display for Defender Bans
-        Label(newWindow, text="Banned Defenders:\n" + ', '.join(def_bans)).pack()
+        Label(newWindow, text='Banned Defenders:\n' + ', '.join(def_bans)).pack()
 
         # Display for Maps
-        Label(newWindow, text="Map Choices:\n" + ', '.join(playable_maps)).pack()
+        Label(newWindow, text='Map Choices:\n' + ', '.join(playable_maps)).pack()
     except:
         # Throw error window is invalid input is put
         ErrorPopup()
@@ -100,31 +105,39 @@ def ResultPopup():
 def ErrorPopup():
     # Create new popup window with error notice
     newWindow = Toplevel(top)
-    newWindow.title("Error")
-    newWindow.geometry("100x55")
+    newWindow.title('Error')
+    newWindow.geometry('100x55')
 
-    Label(newWindow, text="Invalid Input").pack()
+    # Center new window
+    top.eval(f'tk::PlaceWindow {str(newWindow)} center')
+
+    Label(newWindow, text='Invalid Input').pack()
 
     # Button that closes popup window
-    Button(newWindow, text="Got It", command=newWindow.destroy).pack()
+    Button(newWindow, text='Got It', command=newWindow.destroy).pack()
 
 
-# Tkninter main window
+# Tkninter main window master
 top = tkinter.Tk()
 
-is_checked = tkinter.BooleanVar()
+# Center main window
+top.eval('tk::PlaceWindow . center')
+
+# Variable for tracking if checkmark is ticked
+#is_checked = tkinter.BooleanVar()
 
 # This part looks bad because I followed a bad tutorial for my first tkinter project, better examples in ResultPopup func
-L1 = Label(top, text="R6S Customs Manager",).grid(row=0,column=1)
-L2 = Label(top, text="Operator Ban (Per Team)",).grid(row=1,column=0)
-L3 = Label(top, text="Available Maps",).grid(row=2,column=0)
-#L4 = Label(top, text="Symmetric Bans",).grid(row=3,column=0)
+L0 = Label(top, text='R6S Customs Manager',).grid(row=0,column=0)
+L1 = Label(top, text='Amount',).grid(row=0,column=1)
+L2 = Label(top, text='Operator Bans (Per Team)',).grid(row=1,column=0)
+L3 = Label(top, text='Available Maps Count',).grid(row=2,column=0)
+#L4 = Label(top, text='Symmetric Bans',).grid(row=3,column=0)
 E1 = Entry(top, bd =1)
 E1.grid(row=1,column=1)
 E2 = Entry(top, bd =1)
 E2.grid(row=2,column=1)
 E3 = Entry(top, bd =1)
-B1=Button(top, text ="Ready Up!", command=ResultPopup).grid(row=3,column=1,)
+B1=Button(top, text ='Ready Up!', command=ResultPopup).grid(row=3,column=1,)
 #C1 = tkinter.Checkbutton(top,variable=is_checked, onvalue=1, offvalue=0, command=Andor).grid(row=3,column=1) <- For asymmetric bans, ended up get scrapped
 
 top.mainloop()
